@@ -10,7 +10,9 @@ import argparse
 from functools import reduce
 #数据库中所有的数据用户以及服务器配置
 all_user_str = 'hs_cash:dtcxrac1;hs_user:dtcgrac1;hs_ufx:dtcxrac1;hs_mch:dtcxrac1;hs_auth:dtcxrac1;hs_asset:dtcxrac1;hs_fund:dtcgrac1;hs_ofund:dtcgrac1;hs_secu:dtcgrac1;hs_crdt:dtcgrac1;hs_cbs:dtcxrac1;hs_data:dtjyrac1;hs_arch:dtcxrac1;hs_his:dtjyrac1;hs_fil:dtjyrac1;hs_sett:dtcxrac1;hs_settinit:dtcxrac1;hs_ref:dtcxrac1;hs_acpt:dtcxrac1;hs_prod:dtcxrac1;hs_opt:dtcxrac1'
+#设置各个库中的用户的密码，前提条件是每个库中的所有用户的密码都一样
 dict_use={'dtcxrac1':'passwd2016','dtcgrac1':'passwd2016','dtjyrac1':'passwd2016'}
+#根据不通环境【生产或者是测试】来构造那些用户需要过滤
 dict_env=[('uf20csdb','hs_fil'),('ufqzcs','hs_fil','hs_cash')]
 
 class deal_file:
