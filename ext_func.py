@@ -1,4 +1,6 @@
-#升级文件进行排序【升级前执行，对原始包进行排序，重命名】
+######################################################################
+#1、升级文件进行排序【升级前执行，对原始包进行排序，重命名】
+######################################################################
 import pathlib ,re,datetime
 import pandas as pd
 import numpy as np
@@ -64,7 +66,11 @@ list(map(lambda x,y:x.rename(y),df['source_name'],df['new_file_name']))
 
 
 
-#对于spel_modi_FieldType.sql  ORDataType.sql 特殊脚本每个用户需要执行，则批量生成
+
+
+######################################################################
+#2、对于spel_modi_FieldType.sql  ORDataType.sql 特殊脚本每个用户需要执行，则批量生成
+######################################################################
 allow_user_str = 'hs_cash:dtcxrac1;hs_user:dtcgrac1;hs_ufx:dtcxrac1;hs_mch:dtcxrac1;hs_auth:dtcxrac1;hs_asset:dtcxrac1;hs_fund:dtcgrac1;hs_ofund:dtcgrac1;hs_secu:dtcgrac1;hs_crdt:dtcgrac1;hs_cbs:dtcxrac1;hs_data:dtjyrac1;hs_arch:dtcxrac1;hs_his:dtjyrac1;hs_sett:dtcxrac1;hs_settinit:dtcxrac1;hs_ref:dtcxrac1;hs_acpt:dtcxrac1;hs_prod:dtcxrac1;hs_opt:dtcxrac1'
 dict_use={'dtcxrac1':'idb#hspasswd2016','dtcgrac1':'cgjy#1226rac','dtjyrac1':'cgjy#1226rac'}
 [print("conn "+x.split(":")[0]+"/"+dict_use[x.split(":")[1]]+"@"+x.split(":")[1]+"\r\n@"+str(pathlib.Path(r"d:\database\01UF20\04证券UF20-BL2013SP3补丁11-20180814-V1\00Init\spel_modi_FieldType.sql"))) for x in allow_user_str.split(";")]
@@ -78,8 +84,9 @@ dict_use={'dtcxrac1':'idb#hspasswd2016','dtcgrac1':'cgjy#1226rac','dtjyrac1':'cg
 
 
 
-
-#检测生成的sql脚本中是否需要添加dblink
+######################################################################
+#3、检测生成的sql脚本中是否需要添加dblink
+######################################################################
 import pathlib,re,os  
 all_user_str = 'hs_cash:dtcxrac1;hs_user:dtcgrac1;hs_ufx:dtcxrac1;hs_mch:dtcxrac1;hs_auth:dtcxrac1;hs_asset:dtcxrac1;hs_fund:dtcgrac1;hs_ofund:dtcgrac1;hs_secu:dtcgrac1;hs_crdt:dtcgrac1;hs_cbs:dtcxrac1;hs_data:dtjyrac1;hs_arch:dtcxrac1;hs_his:dtjyrac1;hs_fil:dtjyrac1;hs_sett:dtcxrac1;hs_settinit:dtcxrac1;hs_ref:dtcxrac1;hs_acpt:dtcxrac1;hs_prod:dtcxrac1;hs_opt:dtcxrac1'
 cg_users=set([x.split(':')[0] for x in all_user_str.split(';') if x.split(':')[1]=='dtcgrac1'])
@@ -118,7 +125,9 @@ for y in path_all:
                     getdblink(conn_user,line[1:].strip())
             line=f.readline()
  
-#检测是否有连接数据库错误的 
+######################################################################
+#4、检测是否有连接数据库错误的 
+######################################################################
 import re,pathlib
 file_name=pathlib.Path(r'D:\database\01uf20\result_01uf20_2018-08-02-new.sql')
 all_user_str='hs_cash:dtcxrac1;hs_user:dtcgrac1;hs_ufx:dtcxrac1;hs_mch:dtcxrac1;hs_auth:dtcxrac1;hs_asset:dtcxrac1;hs_fund:dtcgrac1;hs_ofund:dtcgrac1;hs_secu:dtcgrac1;hs_crdt:dtcgrac1;hs_cbs:dtcxrac1;hs_data:dtjyrac1;hs_arch:dtcxrac1;hs_his:dtjyrac1;hs_fil:dtjyrac1;hs_sett:dtcxrac1;hs_settinit:dtcxrac1;hs_ref:dtcxrac1;hs_acpt:dtcxrac1;hs_prod:dtcxrac1;hs_opt:dtcxrac1'
@@ -132,7 +141,9 @@ with open(file_name,'r') as f:
                 print(line)
         line=f.readline()
 
-#去除合并脚本中有oracle10g的用户
+######################################################################      
+#5、去除合并脚本中有oracle10g的用户
+######################################################################
 import pathlib,re
 file_name=pathlib.Path(r'D:\database\02user\result_02user_2018-08-02.sql')
 new_sql_file=open(file_name.parent.joinpath(file_name.stem+'-new'+file_name.suffix),'w')
@@ -150,9 +161,10 @@ with open(file_name,'r') as f:
             new_sql_file.write(line)
         line=f.readline()
 new_sql_file.close()
-
-#替换密码：
-dict_use={'dtcxrac1':'idb#hspasswd2016','dtcgrac1':'cgjy#1226rac','dtjyrac1':'cgjy#1226rac'}
+######################################################################
+#6、替换密码：
+######################################################################
+dict_use={'dtcxrac1':'hs_passwd2016','dtcgrac1':'hs_passwd2016','dtjyrac1':'hs_passwd2016'}
 temp_list=[]
 for x in pathlib.Path(r'D:\database\01UF20').rglob('*.log'):
    if re.search('^combine',x.name):
@@ -181,9 +193,10 @@ for file_name in temp_list:
 
 
     
-    
-#以下信息为如何规避xml配置文件中重复的组件 ，适用于so文件，不适用于内存表
+######################################################################
+#7、以下信息为如何规避xml配置文件中重复的组件 ，适用于so文件，不适用于内存表
 #D:\hundsun_sj\01UF20\xml\config_as.xml 为ls或者是as的配置文件
+######################################################################
 with open(r"C:\Users\stonecold\Desktop\config_ls.xml","r") as f:
     dict_a={}
     a=f.readline()
@@ -195,9 +208,10 @@ with open(r"C:\Users\stonecold\Desktop\config_ls.xml","r") as f:
     for k,v in dict_a.items():
         print("<component dll=\""+k+"\"  arg=\""+v+"\" />")
     
-    
-#以下信息为检查内存表中是否有重复的内存表信息：
+######################################################################   
+#8、以下信息为检查内存表中是否有重复的内存表信息：
 #D:\hundsun_sj\01UF20\xml\hsmdb.xml 为内存表的配置文件
+######################################################################
 with open(r"D:\hundsun_sj\01UF20\xml\hsmdb.xml","r") as f:
     dict_b={}
     a=f.readline()
@@ -222,8 +236,9 @@ with open(r"D:\hundsun_sj\01UF20\xml\hsmdb.xml","r") as f:
             
             
             
- 
-#检查xml文件加载的so是否存在真实的文件
+######################################################################
+#9、检查xml文件加载的so是否存在真实的文件
+######################################################################
 appcoms=[x.name for x in pathlib.Path(r'D:\test\appcom\appcom').glob('*.so')]
 with open(r'D:\test\20180727\config_ls.xml','r') as f:
     txt=f.read()
