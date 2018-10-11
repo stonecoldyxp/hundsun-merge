@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#合并需要的升级文件
 import pathlib
 import shutil
 import logging
@@ -8,6 +9,8 @@ import time
 import stat,xlrd
 from send2trash import send2trash
 from collections import Counter
+#定义了合并文件的总目录
+dest_dir_name=r'd:\hundsun_sj'
 class hundsun:
     def __init__(self,source_dir_str,dest_dir_str,outfile_flag,logging_file):
         self.source_dir = pathlib.Path(source_dir_str)
@@ -342,6 +345,7 @@ class hundsun:
 if __name__=="__main__":
     #source_dir_str = r'E:\2018年工作内容\日间测试\20180611\USER'
     while True:
+        #需要输入目录，如 d:\hundsun_files\*  hundsun_files目录下包含了所有的用于升级的文件。
         source_dir_str=input('输入需要合并包的上级目录,[q 退出]:')
         if source_dir_str == 'q':
             os._exit(0)
@@ -350,7 +354,8 @@ if __name__=="__main__":
         else:
             print('文件路径不合法,请重新输入')
     outfile_flag = pathlib.Path(source_dir_str).parts[-1]
-    dest_dir_str = str(pathlib.Path(r'd:\hundsun_sj').joinpath(pathlib.Path(source_dir_str).parts[-1]))
+    #
+    dest_dir_str = str(pathlib.Path(dest_dir_name).joinpath(pathlib.Path(source_dir_str).parts[-1]))
     os.linesep='\n'
     logging_file = 'combine_hundsun_'+outfile_flag+time.strftime('%Y-%m-%d', time.localtime())+'.log'
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',datefmt='%a, %d %b %Y %H:%M:%S',filename=logging_file,filemode="w")
