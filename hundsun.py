@@ -9,10 +9,21 @@ import time
 import stat,xlrd
 from send2trash import send2trash
 from collections import Counter
-#定义了合并文件的总目录
-dest_dir_name=r'd:\hundsun_sj'
+######################################################################################
+#配置信息-begin  如下三个配置参数用于可以按照实际情况来配置
+######################################################################################
+#定义了合并文件的结果文件夹
+DEST_DIR_NAME=r'd:\hundsun_sj'
+#升级说明中需要处理的xls文件中的sheet页
+XLSX_SHEET_NAME=['安装说明','中间件配置','系统配置','特别注意','升级说明','对应配置修改']
+#是否需要检查原始文件中存在未解压的文件
+IF_CHECK_ZIP=1
+######################################################################################
+#配置信息-end
+######################################################################################
+
 class hundsun:
-    def __init__(self,source_dir_str,dest_dir_str,outfile_flag,logging_file):
+    def __init__(self,source_dir_str,dest_dir_str,outfile_flag,logging_file,xlsx_sheet_name):
         self.source_dir = pathlib.Path(source_dir_str)
         self.dest_dir = pathlib.Path(dest_dir_str)
         self.outfile_flag = outfile_flag
@@ -20,7 +31,7 @@ class hundsun:
         self.subdir_list=[]
         self.subfile_list=[]
         self.readme_list = []
-        self.list_a=['安装说明','中间件配置','系统配置','特别注意','升级说明','对应配置修改']
+        self.list_a=xlsx_sheet_name
         self.readme_dir = self.dest_dir.joinpath('readme_'+outfile_flag)
         self.combine_dir=self.dest_dir.joinpath('combine_'+outfile_flag)
         self.subdir_name_index = -(len(self.dest_dir.parents)+2)
@@ -355,7 +366,7 @@ if __name__=="__main__":
             print('文件路径不合法,请重新输入')
     outfile_flag = pathlib.Path(source_dir_str).parts[-1]
     #
-    dest_dir_str = str(pathlib.Path(dest_dir_name).joinpath(pathlib.Path(source_dir_str).parts[-1]))
+    dest_dir_str = str(pathlib.Path(DEST_DIR_NAME).joinpath(pathlib.Path(source_dir_str).parts[-1]))
     os.linesep='\n'
     logging_file = 'combine_hundsun_'+outfile_flag+time.strftime('%Y-%m-%d', time.localtime())+'.log'
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',datefmt='%a, %d %b %Y %H:%M:%S',filename=logging_file,filemode="w")
@@ -367,13 +378,14 @@ if __name__=="__main__":
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
     #################################################################################################
-    ins_hundsun=hundsun(source_dir_str,dest_dir_str,outfile_flag,logging_file)
+    ins_hundsun=hundsun(source_dir_str,dest_dir_str,outfile_flag,logging_file,XLSX_SHEET_NAME)
     checkzip_result = ins_hundsun.checkzipfile()
-    checkzip_result = 0
-    if checkzip_result:
-        logging.warn('存在压缩包的目录有：  '+os.linesep+os.linesep.join(checkzip_result))
-        logging.warn('有压缩文件，请解压后再执行')
-        os._exit(1)
+    #checkzip_result = 0
+    if IF_CHECK_ZIP:
+        if checkzip_result:
+            logging.warn('存在压缩包的目录有：  '+os.linesep+os.linesep.join(checkzip_result))
+            logging.warn('有压缩文件，请解压后再执行')
+            os._exit(1)
     ins_hundsun.copytodest()
     ins_hundsun.del_unuseitems()
     ins_hundsun.filte_move_readme()
