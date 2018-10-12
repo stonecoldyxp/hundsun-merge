@@ -1,5 +1,5 @@
 <p style="text-align: center;">
-    <span style="font-family: 微软雅黑, Microsoft YaHei; font-size: 24px;">恒生升级包整理工具-基于python3.6</span><br/>
+    <span style="font-family: 微软雅黑, Microsoft YaHei; font-size: 24px;">恒生升级包整理工具- 基于python3.6</span><br/>
 </p>
 <p>
     <br/>环境要求：<br/>&nbsp;&nbsp;&nbsp; python 3.6 <br/>&nbsp;&nbsp;&nbsp; pip3 install xlrd<br/>################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;hundsun.py 用于中间件以及客户端文件的的更新整理<span style="color: rgb(255, 0, 0);"> *接口文件*</span><br/>&nbsp;&nbsp;&nbsp;&nbsp;merge_sql.py 用于数据库文件的合并，该文件不包含plb文件的合并，只是用于合并*.sql文件 <span style="color: rgb(255, 0, 0);">*接口文件*</span><br/>&nbsp;&nbsp;&nbsp;&nbsp;util.py 用于升级包排序，合并结果修改的相关操作 参考文件中的备注说明<br/>&nbsp;&nbsp;&nbsp;&nbsp;core.py 核心文件，不需要修改变动 <br/>################################################<br/>
