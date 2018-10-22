@@ -1,23 +1,30 @@
 # -*- coding: utf-8 -*-
+##############################################################
+#  功能:升级包中的.sql文件的合并                             #
+#  1：需要首先对文件进行排序,可以使用pack_sort.py进行排序    #
+#  2：需要首先对文件进行排序,可以手工进行排序                #
+##############################################################
 import pathlib,logging,os,time
 from functools import reduce
-from core import deal_file
+from core import merge_sql
+
 #################################################################################################
-#配置信息-begin  如下三个配置参数用于可以按照实际情况来配置
+#配置信息-begin  如下五个配置参数用于可以按照实际情况来配置
 #################################################################################################
-#定义了合并文件的结果文件夹
+#定义了合并文件的结果文件夹,uf20 ,账户，转融通等升级包都会合并到该目录中。
 DEST_DIR_NAME=r'd:\database'
 #数据库中所有的数据用户以及实例名称
 #格式为：'用户1:用户1所在实例;用户2:用户2所在实例;...用户N:用户N所在实例'
+#生产环境中如果想把hs_fil hs_his单独执行，可以修改ALL_USER_STR = 'hs_his:dtjyrac1;hs_fil:dtjyrac1' 单独合并,注意合并以后的的文件要及时重命名,否正会被覆盖
 ALL_USER_STR = 'hs_cash:dtcxrac1;hs_user:dtcgrac1;hs_ufx:dtcxrac1;hs_mch:dtcxrac1;hs_auth:dtcxrac1;hs_asset:dtcxrac1;hs_fund:dtcgrac1;hs_ofund:dtcgrac1;hs_secu:dtcgrac1;hs_crdt:dtcgrac1;hs_cbs:dtcxrac1;hs_data:dtjyrac1;hs_arch:dtcxrac1;hs_his:dtjyrac1;hs_fil:dtjyrac1;hs_sett:dtcxrac1;hs_settinit:dtcxrac1;hs_ref:dtcxrac1;hs_acpt:dtcxrac1;hs_prod:dtcxrac1;hs_opt:dtcxrac1'
 #设置生产环境中每个数据库中对应的用户密码，前提条件是每个库中的所有用户的密码都一样
-#如果是测试环境或全真环境，密码默认都取值为hundsun
+#如果是测试环境或全真环境，密码默认都取值为hundsun,该条配置无效
 #格式为：{数据库实例名1:密码1,数据库实例名2:密码2}
 DICT_USE={'dtcxrac1':'passwd2016','dtcgrac1':'passwd2016','dtjyrac1':'passwd2016'}
-#配置测试环境需要过滤的用户
+#配置测试环境需要过滤的用户,过滤的用户将不会出现在合并的sql文件中
 #格式为：
-#[(环境名称1(自定义用于区分),数据库实例名1,过滤用户1,过滤用户2,...),(环境名称1(自定义用于区分),数据库实例名2,过滤用户1,过滤用户2,...)]
-#其中 环境名称n,数据库实例名1 必须提供
+#[(环境名称1(自定义用于区分),数据库实例名1,过滤用户1,过滤用户2,...),(环境名称2(自定义用于区分),数据库实例名2,过滤用户1,过滤用户2,...)]
+#其中 环境名称n,数据库实例名n 必须提供
 #如 [('测试环境','uf20csdb','hs_fil'),('全真环境','ufqzcs','hs_fil','hs_cash'),('测试环境-2','ora_data')]
 DICT_ENV=[('测试环境','uf20csdb','hs_fil'),('全真环境','ufqzcs','hs_fil','hs_cash')]
 #是否需要检查待合并的升级包中是否存在尚未解压的文件 判断文件后缀为rar,zip
@@ -30,6 +37,7 @@ IF_CHECK_ZIP=1
 
             
 if __name__=="__main__":
+    #需要输入目录，如 d:\hundsun_files\*  hundsun_files目录下包含了所有的用于升级的文件。
     while True:
         source_path=input('输入合并包的目录,[q 退出]:')
         if source_path == 'q':
@@ -39,6 +47,7 @@ if __name__=="__main__":
         else:
             print('文件路径不合法,请重新输入')
     
+    #选择升级的环境,如生产环境,测试环境,全真环境等，该环境与 DICT_ENV的配置有关系
     while True:
         input_str='请输入需要的环境,['+','.join([' '+str(x[0])+'  '+x[1][0]+' ' for x in enumerate(DICT_ENV)])+'其它值 生产 q 退出]:'
         env_flag=input(input_str)
@@ -55,14 +64,11 @@ if __name__=="__main__":
             all_user_str=ALL_USER_STR
             allow_user_str=ALL_USER_STR
             break
-    #source_path = r'E:\2018年工作内容\日间测试\20180611\USER'
+            
     outfile_flag=pathlib.Path(source_path).parts[-1]
     dest_path =  str(pathlib.Path(DEST_DIR_NAME).joinpath(pathlib.Path(source_path).parts[-1]))
-
-    #allow_user_str = 'hs_user:dtcgrac1;hs_asset:dtcxrac1;hs_secu:dtcgrac1;hs_data:dtjyrac1;hs_sett:dtcxrac1'
-
-
     os.linesep='\n'
+    #设置日志名称
     logging_file = 'combine_'+time.strftime('%Y-%m-%d', time.localtime())+'.log'
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',datefmt='%a, %d %b %Y %H:%M:%S',filename=logging_file,filemode="w")
     #################################################################################################
@@ -74,7 +80,7 @@ if __name__=="__main__":
     logging.getLogger('').addHandler(console)
     #################################################################################################
     #初始化实例，获得相关的数据信息
-    ins_name = deal_file(source_path,dest_path,all_user_str,allow_user_str,logging_file,outfile_flag)
+    ins_name = merge_sql(source_path,dest_path,all_user_str,allow_user_str,logging_file,outfile_flag)
     #检查否存在未解压的文件
     checkzip_result = ins_name.checkzipfile()
     if IF_CHECK_ZIP:
@@ -98,10 +104,13 @@ if __name__=="__main__":
     #显示其他信息：
     ins_name.showinfo()
     #屏蔽oracle10g的sql语句
+    #如果不想屏蔽掉oracle10g的文件,可以将如下命令注释掉
     ins_name.remove_oracle10g()
-    #修改文件的密码
-    if int(env_flag) not in range(len(DICT_ENV)):
+    #修改文件的密码 只有是生产环境才会进行密码修改。
+    
+    if env_flag not in [str(x) for x in range(len(DICT_ENV))]:
         ins_name.change_passwd(DICT_USE)
+    
     #移动日志文件
     ins_name.move_loggingfile()
     print('输出路径为:',dest_path)

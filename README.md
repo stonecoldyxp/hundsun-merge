@@ -1,12 +1,89 @@
-<p style="text-align: center;">
-    <span style="font-family: 微软雅黑, Microsoft YaHei; font-size: 24px;">恒生升级包整理工具- 基于python3.6</span><br/>
-</p>
-<p>
-    <br/>环境要求：<br/>&nbsp;&nbsp;&nbsp; python 3.6 <br/>&nbsp;&nbsp;&nbsp; pip3 install xlrd<br/>################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;hundsun.py 用于中间件以及客户端文件的的更新整理<span style="color: rgb(255, 0, 0);"> *接口文件*</span><br/>&nbsp;&nbsp;&nbsp;&nbsp;merge_sql.py 用于数据库文件的合并，该文件不包含plb文件的合并，只是用于合并*.sql文件 <span style="color: rgb(255, 0, 0);">*接口文件*</span><br/>&nbsp;&nbsp;&nbsp;&nbsp;util.py 用于升级包排序，合并结果修改的相关操作 参考文件中的备注说明<br/>&nbsp;&nbsp;&nbsp;&nbsp;core.py 核心文件，不需要修改变动 <br/>################################################<br/>
-</p>
-<p>
-    <br/><span style="font-family: 楷体, 楷体_GB2312, SimKai; font-size: 20px;"><strong><span style="font-family: 楷体, 楷体_GB2312, SimKai;">步骤1：</span></strong></span>
-</p>
-<p>
-    &nbsp;&nbsp;&nbsp; 假设：原始路径为：E:\2018年工作内容\全真升级\01-uf20&nbsp;&nbsp;&nbsp; 标记为$_PATH<br/>&nbsp;&nbsp;&nbsp; 1.1、将原始升级压缩包复制到$_PATH<br/>&nbsp;&nbsp;&nbsp; 1.2、使用util.py 中的 #1步骤将原始升级进行排序并重命名 【注意修改uf20path变量的路径】<br/>&nbsp;&nbsp;&nbsp; 1.3、分别解压重命名的压缩包并删除原始升级包 【注意检查排序是否正确】<br/>&nbsp;&nbsp;&nbsp; 范例格式为：<br/>&nbsp;&nbsp; &nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $_PATH+-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---01证券UF20-BL2013SP2PACK1补丁51-20170706-V2<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---02SP2PACK1补丁51增值程序<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---03证券UF20-BL2013SP2PACK1补丁52-20170713-V2<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---04SP2PACK1补丁52增值程序<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---05证券UF20-BL2013SP2PACK1补丁53-20170719-V2<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\---06SP2PACK1补丁53增值程序<br/><br/><strong><span style="font-size: 20px; font-family: 楷体, 楷体_GB2312, SimKai;">步骤2：</span></strong><span style="font-size: 20px; font-family: 楷体, 楷体_GB2312, SimKai;"></span><br/>&nbsp;&nbsp;&nbsp; 客户端中间件报盘机等文件的合并<br/>&nbsp;&nbsp;&nbsp; hundsun.py 使用：<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 执行说明：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1、执行：python hundsun.py<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2、按照提示输入原始目录 即$_PATH<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3、合并的结果在hundsun.py中 dest_dir_name的目录中<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 合并结果说明：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---combine_01-uf20&nbsp;&nbsp; #合并的文件信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---readme_01-uf20&nbsp;&nbsp;&nbsp; #各个升级包中的升级说明文件<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---readme_all.txt&nbsp; #所有升级说明中的说明内容<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---readme_all_re.txt&nbsp; #根据readme_all.txt文件的内容提取的内存表、加载的so文件、路由等信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\---readme_relationship.txt&nbsp; #合并的结果于文件夹中的说明文件与原始升级包中的关系<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---combine_hundsun_01-uf202018-10-10.log&nbsp;&nbsp; #合并日志信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\---uncombine_01-uf20&nbsp; #尚未合并的文件<br/><span style="font-family: 楷体, 楷体_GB2312, SimKai; font-size: 20px;"><strong>步骤3：</strong></span><br/>&nbsp;&nbsp;&nbsp; 数据库升级包的合并<br/>&nbsp;&nbsp;&nbsp; merge_sql.py使用<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 执行说明：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1、执行：python merge_sql.py<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2、按照提示输入原始目录 即$_PATH<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3、合并的结果在d:/database目录中<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 合并结果说明：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #####################################################<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---result_01-uf20_2018-10-10.sql&nbsp; #合并的以后生成的结果文件<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---result_01-uf20_2018-10-10-new.sql&nbsp;&nbsp;&nbsp; #因本人使用的是oracle11g,所以将配置文件中的oracle10g的文件全部注释<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---result_01-uf20_2018-10-10-new-passwd.sql&nbsp;&nbsp;&nbsp; #替换为生产环境使用的密码，测试环境没有该文件<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \\---combine_2018-10-10.log&nbsp;&nbsp; #合并日志信息<br/><br/><br/>&nbsp;&nbsp; &nbsp;<br/><br/>
-</p>
+# hundsun-merge
+
+#### 项目介绍
+    用于恒生升级包的合并与配置文件的提取
+
+#### 软件架构
+     ################################################
+     pack_sort.py 用于原始升级包排序  **接口文件** 
+     hundsun.py 用于中间件以及客户端文件的的更新整理  **接口文件** 
+     merge_sql.py 用于数据库文件的合并，该文件不包含plb文件的合并，只是用于合并*.sql文件  ***接口文件*** 
+     util.py 用于升级包排序，合并结果修改的相关操作 参考文件中的备注说明
+     core.py 核心文件，不需要修改变动
+     ################################################
+     
+#### 环境要求：
+    python 3.6
+    pip3 install xlrd
+    pip3 install numpy 
+    pip3 install pandas
+#### 程序特点 
+    1、升级包自动排序，可以重复执行 
+    2、自动提取提取配置内容
+    3、配置灵活，按照需求自动过滤不需要合并的数据库用户 
+    4、多套环境使用一个升级工具，比如生产，仿真，全真等环境可以通过配置环境以及该环境的过滤用户每次升级按照提示自动选择。 
+    5、自动替换生产环境数据库用户密码。
+    6、合并sql的同时自动检查是否有跨库的sql文件
+    7、自动注释oracle10g的sql文件
+    8、自动获取结果中所有.so文件的版本信息
+
+
+#### 使用说明
+
+步骤1：原始升级包排序：
+
+        假设：原始路径为：E:\2018年工作内容\全真升级\01-uf20    标记为`$_PATH`;
+        1.1、将原始升级压缩包复制到`$_PATH`
+        1.2、使用 pack_sort.py 脚本进行升级包的排序，执行 python pack_sort.py 
+        1.3、分别解压重命名的压缩包并删除原始升级包 【注意检查排序是否正确】
+        范例格式为：
+       $_PATH+-
+             +---01证券UF20-BL2013SP2PACK1补丁51-20170706-V2
+             +---02SP2PACK1补丁51增值程序
+             +---03证券UF20-BL2013SP2PACK1补丁52-20170713-V2
+             +---04SP2PACK1补丁52增值程序
+             +---05证券UF20-BL2013SP2PACK1补丁53-20170719-V2
+             \\---06SP2PACK1补丁53增值程序
+
+步骤2：
+    客户端中间件报盘机等文件的合并hundsun.py使用：
+
+        #####################################################
+        执行说明：
+        #####################################################
+            1、执行：python hundsun.py
+            2、按照提示输入原始目录 即$_PATH
+            3、合并的结果在hundsun.py中 dest_dir_name的目录中
+        
+        
+        #####################################################
+        合并结果说明：
+        #####################################################
+            +---combine_01-uf20   #合并的文件信息
+            +---readme_01-uf20    #各个升级包中的升级说明文件
+                +---readme_all.txt  #所有升级说明中的说明内容
+                +---readme_all_re.txt  #根据readme_all.txt文件的内容提取的内存表、加载的so文件、路由等信息
+                \\---readme_relationship.txt  #合并的结果于文件夹中的说明文件与原始升级包中的关系
+            +---combine_hundsun_01-uf202018-10-10.log   #合并日志信息
+            \\---uncombine_01-uf20  #尚未合并的文件
+步骤3：
+    数据库升级包的合并merge_sql.py使用
+
+        #####################################################
+        执行说明：
+        #####################################################
+            1、执行：python merge_sql.py
+            2、按照提示输入原始目录 即$_PATH
+            3、按照提示输入需要执行的环境
+            4、合并的结果在该文件中的配置项DEST_DIR_NAME目录中
+
+        #####################################################
+        合并结果说明：
+        #####################################################
+            +---result_01-uf20_2018-10-10.sql  #合并的以后生成的结果文件
+            +---result_01-uf20_2018-10-10-new.sql    #因本人使用的是oracle11g,所以将配置文件中的oracle10g的文件全部注释
+            +---result_01-uf20_2018-10-10-new-passwd.sql    #替换为生产环境使用的密码，测试环境没有该文件
+            \\---combine_2018-10-10.log   #合并日志信息
+
+
+

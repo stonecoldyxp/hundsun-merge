@@ -6,6 +6,7 @@ from collections import Counter
 class hundsun:
     """
      用户恒生客户端以及中间件文件的升级脚本的合并
+     python hundsun.py 将会调用该类
     """
     def __init__(self,source_dir_str,dest_dir_str,outfile_flag,logging_file,xlsx_sheet_name):
         self.source_dir = pathlib.Path(source_dir_str)
@@ -229,9 +230,6 @@ class hundsun:
             os._exit(1)
             
         if flag:
-            #print(self.dest_dir)
-            #os._exit(1)
-            #appcom_list = [ x for x in self.dest_dir.rglob('*') if x.is_dir() and x.name=='appcom']
             appcom_list = [ y for x in self.subdir_list for y in x.rglob('*') if y.is_dir() and y.name=='appcom']
             appcom_dict_list=[y for x in appcom_list for y in x.parents if y.parent == self.dest_dir]
             appcom_count_dict = dict(Counter(appcom_dict_list))
@@ -250,11 +248,8 @@ class hundsun:
                         result_list.append(temp_path)
                 [os.removedirs(x) for x in appcom_list if x in result_list ]
             brother_appcom_dirs = list(set([ z.name.lower() for x in self.subdir_list for y in x.rglob('*') if y.name == 'appcom' for z in y.parent.iterdir() if z.name != 'appcom' and z.is_dir()]))
-            #print('brother_appcom_dirs:',brother_appcom_dirs)
             brother_other_dirs = [y for x in self.subdir_list for y in x.rglob('*') if y.is_dir() if y.name.lower() in brother_appcom_dirs]
-            #print('brother_other_dirs:',brother_other_dirs)
             brother_sub_files = [ {'relative_dir':y.relative_to(x.parent),'file_name':y} for x in brother_other_dirs  for y in x.rglob('*') if y.is_file() ]
-            #print('brother_sub_files:',brother_sub_files)
             if brother_appcom_dirs:
                 [ self.combine_dir.joinpath(x).mkdir() for x in brother_appcom_dirs if not self.combine_dir.joinpath(x).exists()]
                 exists_file_list=[]
@@ -336,10 +331,27 @@ class hundsun:
             os.remove(pathlib.Path(self.dest_dir,self.logging_file))
         if pathlib.Path(self.logging_file).exists():
             shutil.move(self.logging_file,self.dest_dir)
+    def get_so_version(self):
+        version_dict={}
+        logging.info('开始读取该升级包中的so文件')
+        for file_name in self.combine_dir.joinpath('appcom').rglob('*.so'):
+            with open(file_name,'rb') as f:
+                search_str=re.search('V(\d+\.){1,}\d+',repr(f.read()))
+            if search_str:
+                version_dict[file_name.name]=search_str.group()
+            else:
+                version_dict[file_name.name]='unkown'
+        logging.info('读取该升级包中的so文件完成')
+        with open(self.readme_dir.joinpath('appcom_version.txt') ,'w') as g:
+            g.write('#'*70+os.linesep+' appcom version'+os.linesep+'#'*70+os.linesep)
+            for k,v in version_dict.items():
+                g.write('{:<50}{:<20}'.format(k,v)+os.linesep)
+        logging.info('so文件版本信息写入'+str(self.readme_dir.joinpath('appcom_version.txt'))+'文件中')
 
-class deal_file:
+class merge_sql:
     """
      用户恒生数据库升级的合并脚本
+     python merge_sql.py 将会调用该类
     """
     def __init__(self,source_path,dest_path,all_user_str,allow_user_str,logging_file,outfile_flag):
         self.source_path = source_path
@@ -506,7 +518,9 @@ class deal_file:
             self.batchfile_list.clear()
             self.no_batchfile_list.clear()
             for i, val in enumerate(self.dest_all_sqlfile_list):
-                if re.search('(^(BATCH).*(sql)$)',val['file_name'],re.I):
+                with open(val['dest_file'],'rb') as f:
+                    content=repr(f.read())
+                if re.search('conn(\s)*?(\S)*?/(\S)*?@',content,re.I):
                    self.batchfile_list.append(val)
                 else:
                     self.no_batchfile_list.append(val)
@@ -622,9 +636,13 @@ class deal_file:
         
     def change_passwd(self,dict_passwd):
         source_sql_file=pathlib.Path(self.outsqlfile)
+        if source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix).exists():
+            read_file=source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix)
+        else:
+            read_file=source_sql_file
         try:
             with open(source_sql_file.parent.joinpath(source_sql_file.stem+'-passwd'+source_sql_file.suffix),'w') as new_sql_file:
-                with open(source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix),'r') as f:
+                with open(read_file,'r') as f:
                     line=f.readline()
                     while line:
                         if  re.search('^conn.*',line):
