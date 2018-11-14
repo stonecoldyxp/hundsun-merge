@@ -260,25 +260,24 @@ class hundsun:
                     #exists_file_list =[x.relative_to(self.combine_dir) for x in  self.combine_dir.rglob('*') if x.is_file()]
                     if not self.combine_dir.joinpath(y['relative_dir']).parent.exists():
                         os.makedirs(self.combine_dir.joinpath(y['relative_dir']).parent)
+                    logging.info('开始移动文件'+str(y['file_name'])+'到'+str(dest_file)+'成功'+os.linesep)
                     if dest_file.exists():
                         try:
                             os.chmod(dest_file, stat.S_IWRITE )
                             dest_file.unlink()
                         except:
-                            logging.info('^'*30)
-                            logging.info('user system cmd to delete file')
+                            logging.info('^'*30+'use system cmd to delete file')
                             os.system('del /F '+str(dest_file))
-                            logging.info('^'*30)
                     shutil.copyfile(y['file_name'],dest_file)
                     try:
                         shutil.copystat(y['file_name'],dest_file)
                     except:
                         logging.error('拷贝文件状态失败,请检查:'+str(y['file_name']))
-                    os.remove(y['file_name'])
-                    logging.info('-'*30)
-                    logging.info('file_name: '+str(y['file_name']))
-                    logging.info('dest_file: '+str(dest_file))
-                    logging.info('-'*30)
+                    try:
+                        os.remove(y['file_name'])
+                    except:
+                        logging.info('^'*30+'use system cmd to delete file')
+                        os.system('del /F '+str(y['file_name']))
                     logging.info('移动文件'+str(y['file_name'])+'到'+str(dest_file)+'成功'+os.linesep)
                 #except:
                 #    logging.warn('合并其他文件失败，文件夹包括'+os.linesep)

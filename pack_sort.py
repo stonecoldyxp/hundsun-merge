@@ -3,10 +3,11 @@
 #  需要安装 numpy ,pandas包                                  #
 #  pip3 install numpy                                        #
 #  pip3 install pandas                                       #
+#  pip3 install rarfile                                      #
 #  功能:原始升级包的排序,重命名,需要手工删除原始压缩包       #
 #  需要将原始升级包放入同一个目录下                          #
 ##############################################################
-import pathlib ,re,datetime,os
+import pathlib ,re,datetime,os,platform,rarfile,shutil
 import pandas as pd
 import numpy as np
 
@@ -83,8 +84,53 @@ if __name__=="__main__":
         elif remane_flag.lower() == 'y':
             list(map(lambda x,y:x.rename(y),df['source_name'],df['new_file_name']))
             print('重命名文件成功')
-            os._exit(0)
+            break
         else:
             print('输入不合法,请重新输入,[y  是 ; n  否;q 退出]:')
     
     
+    
+    while True:
+        remane_flag=input('是否删除原始文件并自动解压,[y  是 ; n  否;q 退出]:')
+        if remane_flag.lower() == 'q' or remane_flag.lower() == 'n':
+            os._exit(0)
+        elif remane_flag.lower() == 'y':
+            if re.search('\d+',platform.machine()).group()=='64':
+                rarfile.UNRAR_TOOL=str(pathlib.Path(__file__).resolve().parent.joinpath('rar_x64','UnRAR.exe'))
+            else:
+                rarfile.UNRAR_TOOL=pathlib.Path(__file__).resolve().parent.joinpath('rar_x32','UnRAR.exe')
+            rarfiles=[(x,x.stem,rarfile.RarFile(str(x)),x.parent.joinpath(x.stem)) for x in dirname.iterdir() if rarfile.is_rarfile(str(x))]
+            for item in rarfiles:
+                pathlib_name,str_name,rar_file,dir_name = item
+                if dir_name.exists() and dir_name.is_dir():
+                    try:
+                        shutil.rmtree(dir_name)
+                        print('删除目录'+str(dir_name)+'成功:')
+                        
+                    except:
+                        print('删除目录'+str(dir_name)+'失败:')
+                else:
+                    try:
+                        dir_name.mkdir()
+                        print('创建目录'+str(dir_name)+'成功:')
+
+                    except:
+                        print('创建目录'+str(dir_name)+'失败:')
+                    try:
+                        print('#'*20+'开始解压'+'#'*20)
+                        print('文件:'+str(dir_name))
+                        result=rar_file.extractall(path=str(dir_name))
+                        print('#'*20+'结束解压'+'#'*20)
+                        if not result:
+                            pathlib_name.unlink()
+                            print('删除文件成功:'+str(pathlib_name))
+                        else:
+                            print('解压文件失败:'+str(pathlib_name))
+                    except:
+                        print('删除或解压文件'+str(pathlib_name)+'异常')
+            print('解压删除压缩包文件成功')
+            os._exit(0)
+        else:
+            print('是否删除原始文件并自动解压,[y  是 ; n  否;q 退出]:')
+
+        
