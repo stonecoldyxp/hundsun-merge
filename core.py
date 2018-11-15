@@ -617,7 +617,8 @@ class merge_sql:
     
     def remove_oracle10g(self):
         source_sql_file=pathlib.Path(self.outsqlfile)
-        with open(source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix),'w') as new_sql_file:
+        dest_sql_file=source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix)
+        with open(dest_sql_file,'w') as new_sql_file:
             with open(source_sql_file,'r') as f:
                 line=f.readline()
                 flag=0
@@ -631,17 +632,17 @@ class merge_sql:
                     else:
                         new_sql_file.write(line)
                     line=f.readline()
+        source_sql_file.unlink()
+        dest_sql_file.rename(source_sql_file)
         #self.new_outsqlfile=source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix
+        
         
     def change_passwd(self,dict_passwd):
         source_sql_file=pathlib.Path(self.outsqlfile)
-        if source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix).exists():
-            read_file=source_sql_file.parent.joinpath(source_sql_file.stem+'-new'+source_sql_file.suffix)
-        else:
-            read_file=source_sql_file
+        dest_sql_file=source_sql_file.parent.joinpath(source_sql_file.stem+'-passwd'+source_sql_file.suffix)
         try:
-            with open(source_sql_file.parent.joinpath(source_sql_file.stem+'-passwd'+source_sql_file.suffix),'w') as new_sql_file:
-                with open(read_file,'r') as f:
+            with open(dest_sql_file,'w') as new_sql_file:
+                with open(source_sql_file,'r') as f:
                     line=f.readline()
                     while line:
                         if  re.search('^conn.*',line):
@@ -649,6 +650,8 @@ class merge_sql:
                         else:
                             new_sql_file.write(line)
                         line=f.readline()
+            source_sql_file.unlink()
+            dest_sql_file.rename(source_sql_file)
             logging.info('修改生成的sql文件中的数据库密码完成')
         except:
             logging.warn('修改生成的sql文件中的数据库密码失败')

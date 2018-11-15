@@ -9,9 +9,9 @@
 ######################################################################
 allow_user_str = 'hs_cash:dtcxrac1;hs_user:dtcgrac1;hs_ufx:dtcxrac1;hs_mch:dtcxrac1;hs_auth:dtcxrac1;hs_asset:dtcxrac1;hs_fund:dtcgrac1;hs_ofund:dtcgrac1;hs_secu:dtcgrac1;hs_crdt:dtcgrac1;hs_cbs:dtcxrac1;hs_data:dtjyrac1;hs_arch:dtcxrac1;hs_his:dtjyrac1;hs_sett:dtcxrac1;hs_settinit:dtcxrac1;hs_ref:dtcxrac1;hs_acpt:dtcxrac1;hs_prod:dtcxrac1;hs_opt:dtcxrac1'
 dict_use={'dtcxrac1':'hundsun2016','dtcgrac1':'hundsun2016','dtjyrac1':'hundsun2016'}
-[print("conn "+x.split(":")[0]+"/"+dict_use[x.split(":")[1]]+"@"+x.split(":")[1]+"\r\n@"+str(pathlib.Path(r"d:\database\01UF20\04证券UF20-BL2013SP3补丁11-20180814-V1\00Init\spel_modi_FieldType.sql"))) for x in allow_user_str.split(";")]
+[print("conn "+x.split(":")[0]+"/"+dict_use[x.split(":")[1]]+"@"+x.split(":")[1]+"\r\n@"+str(pathlib.Path(r"d:\database\01UF20\04证券UF20-BL2013SP3补丁11-20180814-V1\00Init\spel_modi_FieldType.sql"))) for x in allow_user_str.split(";") if x ]
 
-[print("conn "+x.split(":")[0]+"/hundsun@"+x.split(":")[1]+"\r\n@"+str(pathlib.Path(r"d:\database\01uf20\05证券UF20-BL2013SP3补丁2-20180328-V3\00Init\ORDataType.sql"))+"\r\n@"+str(pathlib.Path(r"d:\database\01uf20\05证券UF20-BL2013SP3补丁2-20180328-V3\00Init\spel_modi_FieldType.sql"))) for x in all_user_str.split(";")]
+[print("conn "+x.split(":")[0]+"/hundsun@"+x.split(":")[1]+"\r\n@"+str(pathlib.Path(r"d:\database\01uf20\05证券UF20-BL2013SP3补丁2-20180328-V3\00Init\ORDataType.sql"))+"\r\n@"+str(pathlib.Path(r"d:\database\01uf20\05证券UF20-BL2013SP3补丁2-20180328-V3\00Init\spel_modi_FieldType.sql"))) for x in all_user_str.split(";") if x ]
  
 ######################################################################
 #2、检测是否有连接数据库错误的 
